@@ -5,7 +5,7 @@ import Nav from './components/Nav';
 import Footer from './components/Footer';
 
 const title = "Wikipedia Viewer by Hanan Mufti";
-const copyright = "Made with by Hanan Mufti";
+const copyright = "Made by Hanan Mufti";
 
 class App extends Component {
 
