@@ -64,6 +64,10 @@
 
 	var _Nav2 = _interopRequireDefault(_Nav);
 
+	var _Footer = __webpack_require__(189);
+
+	var _Footer2 = _interopRequireDefault(_Footer);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -73,6 +77,7 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	var title = "Wikipedia Viewer by Hanan Mufti";
+	var copyright = "Made with by Hanan Mufti";
 
 	var App = function (_Component) {
 	  _inherits(App, _Component);
@@ -93,7 +98,8 @@
 	        'div',
 	        { className: 'container' },
 	        _react2.default.createElement(_Nav2.default, { title: title }),
-	        _react2.default.createElement(_WikipediaViewer2.default, null)
+	        _react2.default.createElement(_WikipediaViewer2.default, null),
+	        _react2.default.createElement(_Footer2.default, { copyright: copyright })
 	      );
 	    }
 	  }]);
@@ -19817,13 +19823,17 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
+	var _axios = __webpack_require__(161);
+
+	var _axios2 = _interopRequireDefault(_axios);
+
 	var _FormField = __webpack_require__(187);
 
 	var _FormField2 = _interopRequireDefault(_FormField);
 
-	var _axios = __webpack_require__(161);
+	var _Results = __webpack_require__(188);
 
-	var _axios2 = _interopRequireDefault(_axios);
+	var _Results2 = _interopRequireDefault(_Results);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -19842,28 +19852,26 @@
 	      var _this = _possibleConstructorReturn(this, (WikipediaViewer.__proto__ || Object.getPrototypeOf(WikipediaViewer)).call(this));
 
 	      _this.state = {
-	         query: {}
+	         query: [],
+	         render: false
 	      };
-
-	      _this._search = _this._search.bind(_this);
+	      _this._handleState = _this._handleState.bind(_this);
+	      _this._renderResults = _this._renderResults.bind(_this);
 	      return _this;
 	   }
 
 	   _createClass(WikipediaViewer, [{
-	      key: '_search',
-	      value: function _search(e) {
-	         var _this2 = this;
-
-	         e.preventDefault();
-
-	         var input = this.state.searchQuery;
-
-	         _axios2.default.get('https://en.wikipedia.org/w/api.php?action=query&origin=*&format=json&prop=pageimages&generator=search&piprop=name|original&pilimit=max&gsrlimit=20&gsrsearch=' + input).then(function (res) {
-	            _this2.setState({
-	               query: Object.assign({}, _this2.state.query, { query: res.data.query.pages })
-	            });
-	            console.log(_this2.state.query);
+	      key: '_handleState',
+	      value: function _handleState(data) {
+	         this.setState({
+	            query: data,
+	            render: !this.state.render
 	         });
+	      }
+	   }, {
+	      key: '_renderResults',
+	      value: function _renderResults() {
+	         return this.state.render === true ? _react2.default.createElement(_Results2.default, { query: this.state.query }) : this.state.render = false;
 	      }
 	   }, {
 	      key: 'render',
@@ -19871,7 +19879,12 @@
 	         return _react2.default.createElement(
 	            'div',
 	            null,
-	            _react2.default.createElement(_FormField2.default, { _search: this._search })
+	            _react2.default.createElement(_FormField2.default, { query: this.state.query, newSearch: this._handleState }),
+	            _react2.default.createElement(
+	               'div',
+	               { className: 'row' },
+	               this._renderResults()
+	            )
 	         );
 	      }
 	   }]);
@@ -19880,11 +19893,9 @@
 	}(_react.Component);
 
 	WikipediaViewer.propTypes = {
-	   query: _react2.default.PropTypes.objectOf({
+	   query: _react2.default.PropTypes.shape({
 	      pageid: _react2.default.PropTypes.number,
-	      original: _react2.default.PropTypes.objectOf({
-	         source: _react2.default.PropTypes.string
-	      }),
+	      original: _react2.default.PropTypes.any,
 	      title: _react2.default.PropTypes.string
 	   })
 	};
@@ -19895,7 +19906,7 @@
 /* 160 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	   value: true
@@ -19907,13 +19918,18 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	var styles = {
+	   borderBottomLeftRadius: '5px',
+	   borderBottomRightRadius: '5px'
+	};
+
 	var Nav = function Nav(props) {
 	   return _react2.default.createElement(
-	      "nav",
-	      { className: "navbar navbar-inverse bg-primary" },
+	      'nav',
+	      { className: 'navbar navbar-inverse bg-primary', style: styles },
 	      _react2.default.createElement(
-	         "p",
-	         { className: "m-0 text-center navbar-brand" },
+	         'p',
+	         { className: 'm-0 text-center navbar-brand' },
 	         props.title
 	      )
 	   );
@@ -21458,7 +21474,101 @@
 /* 187 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	   value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _axios = __webpack_require__(161);
+
+	var _axios2 = _interopRequireDefault(_axios);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var styles = {
+	   borderRadius: '5px'
+	};
+
+	var FormField = function (_Component) {
+	   _inherits(FormField, _Component);
+
+	   function FormField(props) {
+	      _classCallCheck(this, FormField);
+
+	      var _this = _possibleConstructorReturn(this, (FormField.__proto__ || Object.getPrototypeOf(FormField)).call(this, props));
+
+	      _this.state = {
+	         query: _this.props.query
+	      };
+	      _this._search = _this._search.bind(_this);
+	      return _this;
+	   }
+
+	   _createClass(FormField, [{
+	      key: 'componentWillUnmount',
+	      value: function componentWillUnmount() {
+	         this.serverRequest.abort();
+	      }
+	   }, {
+	      key: '_search',
+	      value: function _search(e) {
+	         var _this2 = this;
+
+	         e.preventDefault();
+
+	         var input = this.refs.search.value;
+
+	         _axios2.default.get('https://en.wikipedia.org/w/api.php?format=json&action=query&origin=*&generator=search&gsrnamespace=0&gsrlimit=20&prop=pageimages|extracts&pilimit=max&exintro&explaintext&exsentences=1&exlimit=max&gsrsearch=' + input).then(function (res) {
+	            _this2.setState({
+	               query: Object.entries(res.data.query.pages),
+	               render: true
+	            });
+	            _this2.props.newSearch(_this2.state.query);
+	         });
+
+	         if (input.length > 0) {
+	            this.refs.search.value = '';
+	         }
+	      }
+	   }, {
+	      key: 'render',
+	      value: function render() {
+	         return _react2.default.createElement(
+	            'form',
+	            { className: 'bg-inverse form-group mt-4 p-4', onSubmit: this._search, style: styles },
+	            _react2.default.createElement('input', { type: 'text', ref: 'search', className: 'form-control' }),
+	            _react2.default.createElement(
+	               'a',
+	               { href: 'https://en.wikipedia.org/wiki/Special:Random', className: 'btn btn-block btn-outline-primary mt-3', target: '_blank' },
+	               'I am lucky!'
+	            )
+	         );
+	      }
+	   }]);
+
+	   return FormField;
+	}(_react.Component);
+
+	exports.default = FormField;
+
+/***/ }),
+/* 188 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	   value: true
@@ -21478,30 +21588,99 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var FormField = function (_Component) {
-	   _inherits(FormField, _Component);
+	var styleOptions = {
+	   backgroundColor: '#333',
+	   borderColor: '#333'
+	};
 
-	   function FormField(props) {
-	      _classCallCheck(this, FormField);
+	var Results = function (_Component) {
+	   _inherits(Results, _Component);
 
-	      return _possibleConstructorReturn(this, (FormField.__proto__ || Object.getPrototypeOf(FormField)).call(this, props));
+	   function Results() {
+	      _classCallCheck(this, Results);
+
+	      return _possibleConstructorReturn(this, (Results.__proto__ || Object.getPrototypeOf(Results)).apply(this, arguments));
 	   }
 
-	   _createClass(FormField, [{
-	      key: "render",
+	   _createClass(Results, [{
+	      key: 'render',
 	      value: function render() {
+	         console.log(this.props.query);
 	         return _react2.default.createElement(
-	            "form",
-	            { onSubmit: this.props._search },
-	            _react2.default.createElement("input", { type: "text", ref: "search" })
+	            'div',
+	            { className: 'col-12' },
+	            this.props.query.map(function (data) {
+	               return _react2.default.createElement(
+	                  'div',
+	                  { key: data[0], className: 'card card-inverse mt-4', style: styleOptions },
+	                  _react2.default.createElement(
+	                     'div',
+	                     { className: 'card-block' },
+	                     _react2.default.createElement(
+	                        'h4',
+	                        { className: 'card-title' },
+	                        data[1].title
+	                     ),
+	                     _react2.default.createElement(
+	                        'p',
+	                        { className: 'card-text' },
+	                        data[1].extract
+	                     ),
+	                     _react2.default.createElement(
+	                        'a',
+	                        { href: 'https://en.wikipedia.org/?curid=' + data[1].pageid, className: 'btn btn-primary', target: '_blank' },
+	                        'Open in Wikipedia'
+	                     )
+	                  )
+	               );
+	            })
 	         );
 	      }
 	   }]);
 
-	   return FormField;
+	   return Results;
 	}(_react.Component);
 
-	exports.default = FormField;
+	exports.default = Results;
+
+/***/ }),
+/* 189 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	   value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var styles = {
+	   borderTopLeftRadius: '5px',
+	   borderTopRightRadius: '5px'
+	};
+
+	var Footer = function Footer(props) {
+	   return _react2.default.createElement(
+	      'nav',
+	      { className: 'container navbar fixed-bottom bg-inverse', style: styles },
+	      _react2.default.createElement(
+	         'p',
+	         { className: 'm-0 text-center text-white' },
+	         props.copyright
+	      )
+	   );
+	};
+
+	Footer.propTypes = {
+	   copyright: _react.PropTypes.string.isRequired
+	};
+
+	exports.default = Footer;
 
 /***/ })
 /******/ ]);

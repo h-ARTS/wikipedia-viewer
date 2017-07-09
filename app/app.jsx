@@ -2,8 +2,10 @@ import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import WikipediaViewer from './components/WikipediaViewer';
 import Nav from './components/Nav';
+import Footer from './components/Footer';
 
 const title = "Wikipedia Viewer by Hanan Mufti";
+const copyright = "Made with by Hanan Mufti";
 
 class App extends Component {
 
@@ -19,6 +21,7 @@ class App extends Component {
       <div className="container">
         <Nav title={title} />
         <WikipediaViewer />
+        <Footer copyright={copyright} />
       </div>
     )
   }

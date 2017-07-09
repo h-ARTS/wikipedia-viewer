@@ -1,36 +1,38 @@
 import React, {Component} from 'react';
-import FormField from './FormField';
 import axios from 'axios';
+import FormField from './FormField';
+import Results from './Results';
 
 class WikipediaViewer extends Component {
 
    constructor() {
       super();
       this.state = {
-         query: {}
+         query: [],
+         render: false
       }
-
-      this._search = this._search.bind(this);
+      this._handleState = this._handleState.bind(this);
+      this._renderResults = this._renderResults.bind(this);
    }
 
-   _search(e) {
-      e.preventDefault();
-      
-      const input = this.state.searchQuery;
+   _handleState(data) {
+      this.setState({
+         query: data,
+         render: !this.state.render
+      })
+   }
 
-      axios.get('https://en.wikipedia.org/w/api.php?action=query&origin=*&format=json&prop=pageimages&generator=search&piprop=name|original&pilimit=max&gsrlimit=20&gsrsearch=' + input).then(res => {
-            this.setState({
-               query: Object.assign({}, this.state.query, {query: res.data.query.pages})
-            });
-            console.log(this.state.query);
-         })
+   _renderResults() {
+      return this.state.render === true ? <Results query={this.state.query} /> : this.state.render = false;
    }
 
    render() {
       return (
          <div>
-            <FormField _search={this._search} />
-            
+            <FormField query={this.state.query} newSearch={this._handleState} />
+            <div className="row">
+               {this._renderResults()}
+            </div>
          </div>
       );
    }
@@ -38,11 +40,9 @@ class WikipediaViewer extends Component {
 }
 
 WikipediaViewer.propTypes = {
-   query: React.PropTypes.objectOf({
+   query: React.PropTypes.shape({
       pageid: React.PropTypes.number,
-      original: React.PropTypes.objectOf({
-         source: React.PropTypes.string
-      }),
+      original: React.PropTypes.any,
       title: React.PropTypes.string,
    })
 }
