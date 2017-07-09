@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {PropTypes} from 'react';
 
 const Nav = props => {
    return(
@@ -8,6 +8,10 @@ const Nav = props => {
          </p>
       </nav>
    );
+}
+
+Nav.propTypes = {
+   title: PropTypes.string.isRequired
 }
 
 export default Nav;

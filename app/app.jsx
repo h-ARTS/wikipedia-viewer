@@ -18,7 +18,7 @@ class App extends Component {
     return (
       <div className="container">
         <Nav title={title} />
-        <h1>Boilerplate app!</h1>
+        <WikipediaViewer />
       </div>
     )
   }
