@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import axios from 'axios';
 import FormField from './FormField';
 import Results from './Results';
 

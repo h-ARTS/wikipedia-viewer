@@ -60,7 +60,7 @@
 
 	var _WikipediaViewer2 = _interopRequireDefault(_WikipediaViewer);
 
-	var _Nav = __webpack_require__(160);
+	var _Nav = __webpack_require__(188);
 
 	var _Nav2 = _interopRequireDefault(_Nav);
 
@@ -82,13 +82,10 @@
 	var App = function (_Component) {
 	  _inherits(App, _Component);
 
-	  function App(props) {
+	  function App() {
 	    _classCallCheck(this, App);
 
-	    var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
-
-	    _this.state = {};
-	    return _this;
+	    return _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).apply(this, arguments));
 	  }
 
 	  _createClass(App, [{
@@ -19823,15 +19820,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _axios = __webpack_require__(161);
-
-	var _axios2 = _interopRequireDefault(_axios);
-
-	var _FormField = __webpack_require__(187);
+	var _FormField = __webpack_require__(160);
 
 	var _FormField2 = _interopRequireDefault(_FormField);
 
-	var _Results = __webpack_require__(188);
+	var _Results = __webpack_require__(187);
 
 	var _Results2 = _interopRequireDefault(_Results);
 
@@ -19912,34 +19905,89 @@
 	   value: true
 	});
 
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
 
+	var _axios = __webpack_require__(161);
+
+	var _axios2 = _interopRequireDefault(_axios);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 	var styles = {
-	   borderBottomLeftRadius: '5px',
-	   borderBottomRightRadius: '5px'
+	   borderRadius: '5px'
 	};
 
-	var Nav = function Nav(props) {
-	   return _react2.default.createElement(
-	      'nav',
-	      { className: 'navbar navbar-inverse bg-primary', style: styles },
-	      _react2.default.createElement(
-	         'p',
-	         { className: 'm-0 text-center navbar-brand' },
-	         props.title
-	      )
-	   );
-	};
+	var FormField = function (_Component) {
+	   _inherits(FormField, _Component);
 
-	Nav.propTypes = {
-	   title: _react.PropTypes.string.isRequired
-	};
+	   function FormField(props) {
+	      _classCallCheck(this, FormField);
 
-	exports.default = Nav;
+	      var _this = _possibleConstructorReturn(this, (FormField.__proto__ || Object.getPrototypeOf(FormField)).call(this, props));
+
+	      _this.state = {
+	         query: _this.props.query
+	      };
+	      _this._search = _this._search.bind(_this);
+	      return _this;
+	   }
+
+	   _createClass(FormField, [{
+	      key: 'componentWillUnmount',
+	      value: function componentWillUnmount() {
+	         this.serverRequest.abort();
+	      }
+	   }, {
+	      key: '_search',
+	      value: function _search(e) {
+	         var _this2 = this;
+
+	         e.preventDefault();
+
+	         var input = this.refs.search.value;
+
+	         _axios2.default.get('https://en.wikipedia.org/w/api.php?format=json&action=query&origin=*&generator=search&gsrnamespace=0&gsrlimit=20&prop=pageimages|extracts&pilimit=max&exintro&explaintext&exsentences=1&exlimit=max&gsrsearch=' + input).then(function (res) {
+	            _this2.setState({
+	               query: Object.entries(res.data.query.pages),
+	               render: true
+	            });
+	            _this2.props.newSearch(_this2.state.query);
+	         });
+
+	         if (input.length > 0) {
+	            this.refs.search.value = '';
+	         }
+	      }
+	   }, {
+	      key: 'render',
+	      value: function render() {
+	         return _react2.default.createElement(
+	            'form',
+	            { className: 'bg-inverse form-group mt-4 p-4', onSubmit: this._search, style: styles },
+	            _react2.default.createElement('input', { type: 'text', ref: 'search', className: 'form-control' }),
+	            _react2.default.createElement(
+	               'a',
+	               { href: 'https://en.wikipedia.org/wiki/Special:Random', className: 'btn btn-block btn-outline-primary mt-3', target: '_blank' },
+	               'I am lucky!'
+	            )
+	         );
+	      }
+	   }]);
+
+	   return FormField;
+	}(_react.Component);
+
+	exports.default = FormField;
 
 /***/ }),
 /* 161 */
@@ -21480,89 +21528,50 @@
 	   value: true
 	});
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _axios = __webpack_require__(161);
-
-	var _axios2 = _interopRequireDefault(_axios);
-
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var styles = {
-	   borderRadius: '5px'
+	var styleOptions = {
+	   backgroundColor: '#333',
+	   borderColor: '#333'
 	};
 
-	var FormField = function (_Component) {
-	   _inherits(FormField, _Component);
-
-	   function FormField(props) {
-	      _classCallCheck(this, FormField);
-
-	      var _this = _possibleConstructorReturn(this, (FormField.__proto__ || Object.getPrototypeOf(FormField)).call(this, props));
-
-	      _this.state = {
-	         query: _this.props.query
-	      };
-	      _this._search = _this._search.bind(_this);
-	      return _this;
-	   }
-
-	   _createClass(FormField, [{
-	      key: 'componentWillUnmount',
-	      value: function componentWillUnmount() {
-	         this.serverRequest.abort();
-	      }
-	   }, {
-	      key: '_search',
-	      value: function _search(e) {
-	         var _this2 = this;
-
-	         e.preventDefault();
-
-	         var input = this.refs.search.value;
-
-	         _axios2.default.get('https://en.wikipedia.org/w/api.php?format=json&action=query&origin=*&generator=search&gsrnamespace=0&gsrlimit=20&prop=pageimages|extracts&pilimit=max&exintro&explaintext&exsentences=1&exlimit=max&gsrsearch=' + input).then(function (res) {
-	            _this2.setState({
-	               query: Object.entries(res.data.query.pages),
-	               render: true
-	            });
-	            _this2.props.newSearch(_this2.state.query);
-	         });
-
-	         if (input.length > 0) {
-	            this.refs.search.value = '';
-	         }
-	      }
-	   }, {
-	      key: 'render',
-	      value: function render() {
+	var Results = function Results(props) {
+	   return _react2.default.createElement(
+	      'div',
+	      { className: 'col-12' },
+	      props.query.map(function (data) {
 	         return _react2.default.createElement(
-	            'form',
-	            { className: 'bg-inverse form-group mt-4 p-4', onSubmit: this._search, style: styles },
-	            _react2.default.createElement('input', { type: 'text', ref: 'search', className: 'form-control' }),
+	            'div',
+	            { key: data[0], className: 'card card-inverse mt-4', style: styleOptions },
 	            _react2.default.createElement(
-	               'a',
-	               { href: 'https://en.wikipedia.org/wiki/Special:Random', className: 'btn btn-block btn-outline-primary mt-3', target: '_blank' },
-	               'I am lucky!'
+	               'div',
+	               { className: 'card-block' },
+	               _react2.default.createElement(
+	                  'h4',
+	                  { className: 'card-title' },
+	                  data[1].title
+	               ),
+	               _react2.default.createElement(
+	                  'p',
+	                  { className: 'card-text' },
+	                  data[1].extract
+	               ),
+	               _react2.default.createElement(
+	                  'a',
+	                  { href: 'https://en.wikipedia.org/?curid=' + data[1].pageid, className: 'btn btn-primary', target: '_blank' },
+	                  'Open in Wikipedia'
+	               )
 	            )
 	         );
-	      }
-	   }]);
+	      })
+	   );
+	};
 
-	   return FormField;
-	}(_react.Component);
-
-	exports.default = FormField;
+	exports.default = Results;
 
 /***/ }),
 /* 188 */
@@ -21574,74 +21583,34 @@
 	   value: true
 	});
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var styleOptions = {
-	   backgroundColor: '#333',
-	   borderColor: '#333'
+	var styles = {
+	   borderBottomLeftRadius: '5px',
+	   borderBottomRightRadius: '5px'
 	};
 
-	var Results = function (_Component) {
-	   _inherits(Results, _Component);
+	var Nav = function Nav(props) {
+	   return _react2.default.createElement(
+	      'nav',
+	      { className: 'navbar navbar-inverse bg-primary', style: styles },
+	      _react2.default.createElement(
+	         'p',
+	         { className: 'm-0 text-center navbar-brand' },
+	         props.title
+	      )
+	   );
+	};
 
-	   function Results() {
-	      _classCallCheck(this, Results);
+	Nav.propTypes = {
+	   title: _react.PropTypes.string.isRequired
+	};
 
-	      return _possibleConstructorReturn(this, (Results.__proto__ || Object.getPrototypeOf(Results)).apply(this, arguments));
-	   }
-
-	   _createClass(Results, [{
-	      key: 'render',
-	      value: function render() {
-	         console.log(this.props.query);
-	         return _react2.default.createElement(
-	            'div',
-	            { className: 'col-12' },
-	            this.props.query.map(function (data) {
-	               return _react2.default.createElement(
-	                  'div',
-	                  { key: data[0], className: 'card card-inverse mt-4', style: styleOptions },
-	                  _react2.default.createElement(
-	                     'div',
-	                     { className: 'card-block' },
-	                     _react2.default.createElement(
-	                        'h4',
-	                        { className: 'card-title' },
-	                        data[1].title
-	                     ),
-	                     _react2.default.createElement(
-	                        'p',
-	                        { className: 'card-text' },
-	                        data[1].extract
-	                     ),
-	                     _react2.default.createElement(
-	                        'a',
-	                        { href: 'https://en.wikipedia.org/?curid=' + data[1].pageid, className: 'btn btn-primary', target: '_blank' },
-	                        'Open in Wikipedia'
-	                     )
-	                  )
-	               );
-	            })
-	         );
-	      }
-	   }]);
-
-	   return Results;
-	}(_react.Component);
-
-	exports.default = Results;
+	exports.default = Nav;
 
 /***/ }),
 /* 189 */
